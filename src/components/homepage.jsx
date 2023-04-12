@@ -80,7 +80,8 @@ const Home = () => {
         <div className='container'>
         <h1>{user.username}</h1>
         {response!==''?<p>{response}</p>:null}
-        {isLoading?<Loader/>:showBalance?<p>Your Total Balance is {balance.$numberDecimal}</p>:null}
+        {isLoading?<Loader/>:
+        showBalance?<p>Your Total Balance is {balance.$numberDecimal}</p>:null}
 
         {showCredit?<form onSubmit={handleSubmitCredit} style={{width:'100%'}}>
             <input type="text" name="amountcredit" id="amountcredit" placeholder='Enter Credit Amount'/><br />
@@ -93,7 +94,8 @@ const Home = () => {
             <input type="submit" value="Submit" /><br />
         </form>:null}
         {/* {console.log(transactions)} */}
-        {isLoading? <Loader/> :showTransactions && transactions ?
+        {isLoading? <Loader/> :
+        showTransactions && transactions ?
         <table>
             <thead>
             <tr>
