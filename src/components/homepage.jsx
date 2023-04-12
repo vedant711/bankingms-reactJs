@@ -10,55 +10,78 @@ const Home = () => {
     const [showDebit,setShowDebit] = useState(false)
     const [showBalance,setShowBalance] = useState(false)
     const [showTransactions,setShowTransactions] = useState(false)
-
+    const [response,setResponse] = useState('')
     const [transactions,setTransactions] = useState([])
-    const handleSubmitCredit = e => {
-        let amount = e.target.amount.value;
-        let pin = e.target.pin.value;
-        axios.post(`http://127.0.0.1:55355/credit/${user.userid}`,{'amount':amount,'pin':pin}).then(res=>{
-            console.log(res)
+    const [balance,setBalance] = useState([])
+
+    const handleSubmitCredit = async (e) => {
+        e.preventDefault();
+        const amount = e.target.amountcredit.value;
+        const pin = e.target.pincredit.value;
+        await axios.post(`https://bankingms.onrender.com/credit/${user.userid}`,{'amount':amount,'pin':pin}).then(res=>{
+            setShowCredit(false)
+            setResponse(res.data.message)
+            setTimeout(()=>{
+                setResponse('')
+            },5000)
+        }).catch(err=>console.log(err))
+
+    }
+
+    const handleSubmitDebit = async(e) => {
+        e.preventDefault();
+        const amount = e.target.amountdebit.value;
+        const pin = e.target.pindebit.value;
+        await axios.post(`https://bankingms.onrender.com/debit/${user.userid}`,{'amount':amount,'pin':pin}).then(res=>{
+            setShowDebit(false)
+            setResponse(res.data.message)
+            setTimeout(()=>{
+                setResponse('')
+                // console.log(response)
+            },5000)
         })
 
     }
 
-    const handleSubmitDebit = e => {
-        let amount = e.target.amount.value;
-        let pin = e.target.pin.value;
-        axios.post(`http://127.0.0.1:55355/debit/${user.userid}`,{'amount':amount,'pin':pin}).then(res=>{
-            console.log(res)
-        })
-
+    const callBalance = () => {
+        axios.get(`https://bankingms.onrender.com/balance/${user.userid}`).then(res=>{
+               setBalance(res.data.balance);
+               setShowBalance(!showBalance);
+             })
     }
 
-    useEffect(() => {
-      axios.get(`http://127.0.0.1:55355/dashboard/${user.userid}`).then(res=>{
-        setTransactions(res.data.transactions)
-      })
-    }, [])
+    const callTransactions = () => {
+            axios.get(`https://bankingms.onrender.com/dashboard/${user.userid}`).then(res=>{
+               setTransactions(res.data.transactions);
+               setShowTransactions(!showTransactions);
+             })
+    }
+    
     
     return (
         <>
         <div class="header">
         <p onClick={()=>{setShowCredit(!showCredit);setShowDebit(false);setShowBalance(false);setShowTransactions(false);}}>Credit Amount</p>
         <p onClick={()=>{setShowDebit(!showDebit);setShowBalance(false);setShowTransactions(false);setShowCredit(false);}}>Debit Amount</p>
-        <p onClick={()=>{setShowBalance(!showBalance);setShowTransactions(false);setShowCredit(false);setShowDebit(false)}}>Balance Inquiry</p>
-        <p onClick={()=>{setShowTransactions(!showTransactions);setShowCredit(false);setShowDebit(false);setShowBalance(false)}}>Transaction Logs</p>
+        <p onClick={()=>{setShowBalance(!showBalance);setShowTransactions(false);setShowCredit(false);setShowDebit(false);callBalance();}}>Balance Inquiry</p>
+        <p onClick={()=>{setShowCredit(false);setShowDebit(false);setShowBalance(false);callTransactions();}}>Transaction Logs</p>
         
         <p onClick={logoutUser}>Logout</p>
         
     </div>
         <div className='container'>
         <h1>{user.username}</h1>
-        {showBalance?<p>Your Total Balance is {user.balance.$numberDecimal}</p>:null}
+        {response!==''?<p>{response}</p>:null}
+        {showBalance?<p>Your Total Balance is {balance.$numberDecimal}</p>:null}
 
-        {showCredit?<form  onSubmit={handleSubmitCredit} style={{width:'100%'}}>
-            <input type="text" name="amount" id="amount" placeholder='Enter Credit Amount'/><br />
-            <input type="text" name="pin" id="pin" placeholder='Enter PIN'/><br />
-            <input type="submit" value="Submit" /><br />
+        {showCredit?<form onSubmit={handleSubmitCredit} style={{width:'100%'}}>
+            <input type="text" name="amountcredit" id="amountcredit" placeholder='Enter Credit Amount'/><br />
+            <input type="text" name="pincredit" id="pincredit" placeholder='Enter PIN'/><br />
+            <button type="submit" >Submit</button><br />
         </form>:null}
         {showDebit?<form  onSubmit={handleSubmitDebit} style={{width:'100%'}}>
-            <input type="text" name="amount" id="amount" placeholder='Enter Debit Amount'/><br />
-            <input type="text" name="pin" id="pin" placeholder='Enter PIN'/><br />
+            <input type="text" name="amountdebit" id="amountdebit" placeholder='Enter Debit Amount'/><br />
+            <input type="text" name="pindebit" id="pindebit" placeholder='Enter PIN'/><br />
             <input type="submit" value="Submit" /><br />
         </form>:null}
         {/* {console.log(transactions)} */}

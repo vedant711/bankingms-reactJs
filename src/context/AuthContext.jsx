@@ -24,8 +24,8 @@ export const AuthProvider = ({ children }) => {
   
     const loginUser = async (username, password) => {
         try {
-      const response = await fetch("http://127.0.0.1:55355/login", {
-        method: "POST",
+      const response = await fetch("https://bankingms.onrender.com/login", { 
+      method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const registerUser = async(name,password,balance,pin) => {
-        await axios.post('http://127.0.0.1:55355/create',{'name':name,'password':password,'balance':balance,'pin':pin}).then(res=>{
+        await axios.post('https://bankingms.onrender.com/create',{'name':name,'password':password,'balance':balance,'pin':pin}).then(res=>{
             console.log(res);
         })
         navigate('/')
