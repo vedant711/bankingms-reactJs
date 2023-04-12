@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import AuthContext from "../context/AuthContext";
 import axios from 'axios';
+import Loader from './loader';
 
 
 const Home = () => {
@@ -13,6 +14,7 @@ const Home = () => {
     const [response,setResponse] = useState('')
     const [transactions,setTransactions] = useState([])
     const [balance,setBalance] = useState([])
+    const [isLoading, setLoading] = useState(true)
 
     const handleSubmitCredit = async (e) => {
         e.preventDefault();
@@ -44,16 +46,22 @@ const Home = () => {
     }
 
     const callBalance = () => {
+        setLoading(true)
         axios.get(`https://bankingms.onrender.com/balance/${user.userid}`).then(res=>{
                setBalance(res.data.balance);
                setShowBalance(!showBalance);
+               setLoading(false)
              })
     }
 
     const callTransactions = () => {
+        setLoading(true)
+
             axios.get(`https://bankingms.onrender.com/dashboard/${user.userid}`).then(res=>{
                setTransactions(res.data.transactions);
                setShowTransactions(!showTransactions);
+        setLoading(false)
+
              })
     }
     
@@ -72,7 +80,7 @@ const Home = () => {
         <div className='container'>
         <h1>{user.username}</h1>
         {response!==''?<p>{response}</p>:null}
-        {showBalance?<p>Your Total Balance is {balance.$numberDecimal}</p>:null}
+        {isLoading?<Loader/>:showBalance?<p>Your Total Balance is {balance.$numberDecimal}</p>:null}
 
         {showCredit?<form onSubmit={handleSubmitCredit} style={{width:'100%'}}>
             <input type="text" name="amountcredit" id="amountcredit" placeholder='Enter Credit Amount'/><br />
@@ -85,7 +93,7 @@ const Home = () => {
             <input type="submit" value="Submit" /><br />
         </form>:null}
         {/* {console.log(transactions)} */}
-        {showTransactions && transactions ?
+        {isLoading? <Loader/> :showTransactions && transactions ?
         <table>
             <thead>
             <tr>
