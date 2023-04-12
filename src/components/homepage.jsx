@@ -14,7 +14,7 @@ const Home = () => {
     const [response,setResponse] = useState('')
     const [transactions,setTransactions] = useState([])
     const [balance,setBalance] = useState([])
-    const [isLoading, setLoading] = useState(true)
+    const [isLoading, setLoading] = useState(false)
 
     const handleSubmitCredit = async (e) => {
         e.preventDefault();
