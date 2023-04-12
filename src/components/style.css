@@ -293,7 +293,7 @@ body {
     background: #000;
   }
   .middle {
-    top: 60%;
+    top: 55%;
     left: 50%;
     transform: translate(-60%, -50%);
     position: absolute;
