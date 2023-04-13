@@ -15,7 +15,7 @@ const Home = () => {
     const [transactions,setTransactions] = useState([])
     const [balance,setBalance] = useState([])
     const [isLoading, setLoading] = useState(false)
-
+    const cookie = localStorage.getItem('authTokens')
     const handleSubmitCredit = async (e) => {
         e.preventDefault();
         const amount = e.target.amountcredit.value;
@@ -47,7 +47,7 @@ const Home = () => {
 
     const callBalance = () => {
         setLoading(true)
-        axios.get(`https://bankingms.onrender.com/balance/${user.userid}`).then(res=>{
+        axios.post(`https://bankingms.onrender.com/balance/${user.userid}`,{'token':cookie}).then(res=>{
                setBalance(res.data.balance);
                setShowBalance(!showBalance);
                setLoading(false)
@@ -57,7 +57,7 @@ const Home = () => {
     const callTransactions = () => {
         setLoading(true)
 
-            axios.get(`https://bankingms.onrender.com/dashboard/${user.userid}`).then(res=>{
+            axios.post(`https://bankingms.onrender.com/dashboard/${user.userid}`,{'token':cookie}).then(res=>{
                setTransactions(res.data.transactions);
                setShowTransactions(!showTransactions);
         setLoading(false)
@@ -71,7 +71,7 @@ const Home = () => {
         <div class="header">
         <p onClick={()=>{setShowCredit(!showCredit);setShowDebit(false);setShowBalance(false);setShowTransactions(false);}}>Credit Amount</p>
         <p onClick={()=>{setShowDebit(!showDebit);setShowBalance(false);setShowTransactions(false);setShowCredit(false);}}>Debit Amount</p>
-        <p onClick={()=>{setShowBalance(!showBalance);setShowTransactions(false);setShowCredit(false);setShowDebit(false);callBalance();}}>Balance Inquiry</p>
+        <p onClick={()=>{setShowTransactions(false);setShowCredit(false);setShowDebit(false);callBalance();}}>Balance Inquiry</p>
         <p onClick={()=>{setShowCredit(false);setShowDebit(false);setShowBalance(false);callTransactions();}}>Transaction Logs</p>
         
         <p onClick={logoutUser}>Logout</p>
